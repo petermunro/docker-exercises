@@ -292,7 +292,7 @@ Learn about internal networks without external access.
 1. Create an internal network
 2. Run containers on the internal network
     - Use the alpine image, as it has `ping` installed
-    - Run them interactively, in two separate terminals
+    - Run them as daemon processes, using the command `sleep 600` to sleep for 10 minutes
 3. Try to access the internet from the containers
 4. Verify containers can communicate with each other
 5. Clean up when done
