@@ -291,6 +291,8 @@ Learn about internal networks without external access.
 
 1. Create an internal network
 2. Run containers on the internal network
+    - Use the alpine image, as it has `ping` installed
+    - Run them interactively, in two separate terminals
 3. Try to access the internet from the containers
 4. Verify containers can communicate with each other
 5. Clean up when done
@@ -303,14 +305,13 @@ Learn about internal networks without external access.
 docker network create --internal internal-net
 
 # Run containers
-docker run -d --name internal1 --network internal-net nginx
-docker run -d --name internal2 --network internal-net nginx
+docker run -d --rm --name internal1 --network internal-net alpine sleep 600
+docker run -d --rm --name internal2 --network internal-net alpine sleep 600
 
-# Try internet access (should fail)
-docker exec -it internal1 apt-get update
+# Try internet access from within containers (should fail)
+docker exec -it internal1 ping google.com
 
 # Test internal communication
-docker exec -it internal1 apt-get install -y iputils-ping
 docker exec -it internal1 ping internal2
 
 # Clean up
