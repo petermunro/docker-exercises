@@ -266,33 +266,7 @@ docker rm inspect-format
 ```
 </details>
 
-## Exercise 9: Resource Limits
-Learn to set and verify container resource limits.
-
-1. Run an nginx container with these resource limits:
-   - Maximum memory: 512MB
-   - CPU limit: 0.5 (50% of one CPU)
-2. Inspect the container and look for these limits under "HostConfig"
-   (Hint: Use `docker inspect <container_name> | grep -A 10 "HostConfig"`)
-3. Clean up when done
-
-<details>
-<summary>Reveal Solution</summary>
-
-```bash
-# Run container with resource limits
-docker run -d --name limited-nginx --memory=512m --cpus=0.5 nginx
-
-# Check resource limits
-docker inspect limited-nginx | grep -A 10 "HostConfig"
-
-# Clean up
-docker stop limited-nginx
-docker rm limited-nginx
-```
-</details>
-
-## Exercise 10: Environment Variables
+## Exercise 9: Environment Variables
 Learn to work with container environment variables.
 
 1. Run an Alpine container with these environment variables:
