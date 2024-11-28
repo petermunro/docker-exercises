@@ -9,7 +9,7 @@ Learn how to create and manage Docker volumes.
 2. List all volumes on your system
 3. Inspect the volume you just created
 4. Create another volume with a different name
-5. Try to remove the first volume
+5. Remove the first volume
 6. List volumes again to verify the removal
 
 <details>
@@ -36,80 +36,148 @@ docker volume ls
 ```
 </details>
 
-## Exercise 2: Using Named Volumes
-Learn how to use volumes with containers.
+## Exercise 2: Media Upload Service
+Learn how volumes persist user-generated content by working with a file upload application.
 
-1. Create a new volume named "nginx-data"
-2. Run an nginx container that uses this volume to store its logs
-   - Mount the volume to `/var/log/nginx` in the container
-3. Inspect the container to verify the volume mount
-4. Stop and remove the container
-5. Create a new container using the same volume
-6. Verify that the data persists
+1. Clone the file upload application repository:
+   ```bash
+   git clone https://github.com/petermunro/file-upload-demo.git
+   cd file-upload-demo
+   ```
 
-<details>
-<summary>Reveal Solution</summary>
+2. Build the Docker image:
+   ```bash
+   docker build -t file-upload-demo .
+   ```
 
-```bash
-# Create volume
-docker volume create nginx-data
+3. Create a named volume for storing uploads:
+   ```bash
+   docker volume create upload-data
+   ```
 
-# Run container with volume
-docker run -d --name nginx1 -v nginx-data:/var/log/nginx nginx
+4. Run the container with the volume mounted:
+   ```bash
+   docker run -d \
+     --name upload-app \
+     -p 5000:5000 \
+     -v upload-data:/app/uploads \
+     file-upload-demo
+   ```
 
-# Inspect container
-docker inspect nginx1
+5. Test the application:
+   - Open http://localhost:5000 in your browser
+   - Upload several files through the web interface
+   - Verify the files are listed on the page
 
-# Stop and remove container
-docker stop nginx1
-docker rm nginx1
-
-# Run new container with same volume
-docker run -d --name nginx2 -v nginx-data:/var/log/nginx nginx
-
-# Verify data persistence
-docker exec nginx2 ls -l /var/log/nginx
-```
-</details>
-
-## Exercise 3: Bind Mounts
-Learn how to use bind mounts to share files between host and container.
-
-1. Create a new directory on your host system named "web-content"
-2. Create an index.html file in this directory with some basic HTML
-3. Run an nginx container that uses a bind mount to serve this content
-4. Access the website through your browser
-5. Modify the index.html file on your host
-6. Refresh your browser to see the changes
+6. Demonstrate persistence:
+   - Stop and remove the container
+   - Create a new container using the same app and volume
+   - Verify your uploads are still available
+   - You can also exec into the container (or start an Ubuntu one) and verify the files are present
 
 <details>
 <summary>Reveal Solution</summary>
 
 ```bash
-# Create directory and file
-mkdir web-content
-echo "<h1>Hello from bind mount!</h1>" > web-content/index.html
+# Stop and remove the first container
+docker stop upload-app
+docker rm upload-app
 
-# Run container with bind mount
-docker run -d --name nginx-web -p 8080:80 -v $(pwd)/web-content:/usr/share/nginx/html nginx
+# Create new container with same volume
+docker run -d \
+  --name upload-app-2 \
+  -p 5000:5000 \
+  -v upload-data:/app/uploads \
+  file-upload-demo
 
-# Modify the file
-echo "<h1>Updated content!</h1>" > web-content/index.html
+# Verify files persist by visiting http://localhost:5000
 
-# Access at http://localhost:8080
+# Optional: Inspect files directly in container
+docker exec upload-app-2 ls -l /app/uploads
+
+# Start an Ubuntu container and verify files are present
+docker run --volume upload-data:/uploads ubuntu ls -l /uploads
 
 # Clean up
-docker stop nginx-web
-docker rm nginx-web
+docker stop upload-app-2
+docker rm upload-app-2
+docker volume rm upload-data
 ```
 </details>
 
+
+
+## Exercise 3: Configuration Management with Bind Mounts
+
+Learn how to use bind mounts to manage application configuration files externally.
+
+1. Create a simple Express.js application that reads configuration from a file
+2. Use bind mounts to modify the configuration without rebuilding the container
+3. Observe real-time configuration updates
+
+### Setup
+
+1. Clone the repository:
+```bash
+git clone https://github.com/petermunro/docker-config-demo.git
+cd docker-config-demo
+```
+
+### Exercise Steps
+
+1. Build the image:
+```bash
+# Build the image
+docker build -t config-demo .
+```
+
+2. Run with config directory mounted as a bind mount
+
+3. Test the initial configuration:
+    - Visit http://localhost:3000
+
+
+4. Modify the configuration without restarting the container
+   - Edit the `config/settings.json` file - try different scenarios:
+        - Change the theme
+        - Change the welcome message
+        - Change the font size
+
+5. Test the updated configuration:
+    - Visit http://localhost:3000
+
+6. Clean up:
+```bash
+docker stop config-app
+docker rm config-app
+```
+
+<details>
+<summary>Reveal Solution</summary>
+
+```bash
+docker run -d --name config-app \
+    -p 3000:3000 \
+    -v $(pwd)/config:/app/config \
+    config-demo
+```
+</details>
+
+
+
 ## Exercise 4: Volume Sharing Between Containers
+
 Learn how multiple containers can share the same volume.
 
 1. Create a volume named "shared-data"
 2. Run a container that writes to this volume
+    - Hint: this command will write data to the volume, but of course you will need to run it in a container:
+        ```bash
+        sh -c 'echo "Hello from container 1" > /data/test.txt'
+        ```
 3. Run another container that reads from the same volume
+    - Hint: the Unix command `cat` will read data from a file
+
 4. Verify that both containers can access the same data
 
 <details>
@@ -125,6 +193,8 @@ docker run --rm -v shared-data:/data alpine sh -c 'echo "Hello from container 1"
 # Run second container to read data
 docker run --rm -v shared-data:/data alpine cat /data/test.txt
 
+
+# Alternative solution:
 # Run both containers simultaneously
 docker run -d --name writer -v shared-data:/data alpine tail -f /dev/null
 docker run -d --name reader -v shared-data:/data alpine tail -f /dev/null
@@ -139,13 +209,136 @@ docker rm writer reader
 ```
 </details>
 
-## Exercise 5: Volume Backup and Restore
+
+
+
+## Exercise 5: Volume Labels
+
+Learn how to organize volumes using labels.
+
+1. Create volumes with different labels
+2. List volumes with a specific label
+3. Filter volumes based on labels
+4. Remove volumes with specific labels
+    - Hint: use bash shell command substitution to pass the label to the `docker volume rm` command
+        - Example: `echo Today is $(date)`
+
+<details>
+<summary>Reveal Solution</summary>
+
+```bash
+# Create volumes with labels
+docker volume create --label env=prod --label app=web prod-web-data
+docker volume create --label env=dev --label app=web dev-web-data
+docker volume create --label env=prod --label app=db prod-db-data
+
+# List volumes with label
+docker volume ls --filter label=env=prod
+
+# Remove volumes with label
+docker volume rm $(docker volume ls --filter label=env=dev -q)
+
+# List remaining volumes
+docker volume ls
+```
+</details>
+
+
+## Exercise 6: Volume Cleanup
+Learn how to manage volume cleanup and avoid storage leaks.
+
+1. Create several volumes
+2. Create and remove containers that use these volumes
+3. Identify unused volumes
+4. Clean up unused volumes
+5. Verify cleanup
+
+<details>
+<summary>Reveal Solution</summary>
+
+```bash
+# Create volumes
+docker volume create vol1
+docker volume create vol2
+docker volume create vol3
+
+# Use volumes in containers
+docker run --rm -v vol1:/data1 -v vol2:/data2 alpine echo "test"
+docker run --rm -v vol3:/data3 alpine echo "test"
+
+# List unused volumes
+docker volume ls
+
+# Remove unused volumes
+docker volume prune -f
+
+# Verify cleanup
+docker volume ls
+```
+</details>
+
+
+
+## Next Steps
+After completing these exercises, you should be comfortable with:
+- Creating and managing Docker volumes
+- Using bind mounts
+- Working with tmpfs mounts
+- Sharing data between containers
+- Backing up and restoring volume data
+- Volume organization and cleanup
+- Complex storage scenarios
+
+---
+
+## Appendix: Further Exercises
+
+## Exercise A1: Volume Drivers
+
+Learn about volume drivers and their capabilities.
+
+1. List available volume drivers
+2. Create a volume with the local driver explicitly
+3. Inspect the volume to see its driver
+4. Try to create a volume with different options
+
+<details>
+<summary>Reveal Solution</summary>
+
+```bash
+# List volume drivers
+docker info | grep "Volume"
+
+# Create volume with explicit driver
+docker volume create --driver local my-local-vol
+
+# Inspect volume
+docker volume inspect my-local-vol
+
+# Create volume with options
+docker volume create --driver local \
+  --opt type=none \
+  --opt o=bind \
+  --opt device=/home/user/data \
+  my-custom-vol
+
+# Clean up
+docker volume rm my-local-vol my-custom-vol
+```
+</details>
+
+
+
+## Exercise A2: Volume Backup and Restore
+
 Learn how to backup and restore volume data.
 
 1. Create a volume and add some data to it
 2. Create a backup of the volume data
+    - Hint: the Unix command `tar` can be used to create a backup
 3. Remove the original volume
-4. Create a new volume and restore the data
+4. Create a new volume, and then restore the data
+    - Hint: you can again use the Unix command `tar` to restore the data
 5. Verify the restored data
 
 <details>
@@ -171,7 +364,10 @@ docker run --rm -v data-vol-restored:/data alpine cat /data/file.txt
 ```
 </details>
 
-## Exercise 6: tmpfs Mounts
+
+
+## Exercise A3: tmpfs Mounts
+
 Learn how to use temporary file system mounts (Linux only).
 
 1. Run a container with a tmpfs mount
@@ -205,101 +401,9 @@ docker rm tmpfs-test
 ```
 </details>
 
-## Exercise 7: Volume Drivers
-Learn about volume drivers and their capabilities.
 
-1. List available volume drivers
-2. Create a volume with the local driver explicitly
-3. Inspect the volume to see its driver
-4. Try to create a volume with different options
+## Exercise A4: Advanced Volume Scenarios
 
-<details>
-<summary>Reveal Solution</summary>
-
-```bash
-# List volume drivers
-docker info | grep "Volume"
-
-# Create volume with explicit driver
-docker volume create --driver local my-local-vol
-
-# Inspect volume
-docker volume inspect my-local-vol
-
-# Create volume with options
-docker volume create --driver local \
-  --opt type=none \
-  --opt o=bind \
-  --opt device=/home/user/data \
-  my-custom-vol
-
-# Clean up
-docker volume rm my-local-vol my-custom-vol
-```
-</details>
-
-## Exercise 8: Volume Labels
-Learn how to organize volumes using labels.
-
-1. Create volumes with different labels
-2. List volumes with a specific label
-3. Filter volumes based on labels
-4. Remove volumes with specific labels
-
-<details>
-<summary>Reveal Solution</summary>
-
-```bash
-# Create volumes with labels
-docker volume create --label env=prod --label app=web prod-web-data
-docker volume create --label env=dev --label app=web dev-web-data
-docker volume create --label env=prod --label app=db prod-db-data
-
-# List volumes with label
-docker volume ls --filter label=env=prod
-
-# Remove volumes with label
-docker volume rm $(docker volume ls --filter label=env=dev -q)
-
-# List remaining volumes
-docker volume ls
-```
-</details>
-
-## Exercise 9: Volume Cleanup
-Learn how to manage volume cleanup and avoid storage leaks.
-
-1. Create several volumes
-2. Create and remove containers that use these volumes
-3. Identify unused volumes
-4. Clean up unused volumes
-5. Verify cleanup
-
-<details>
-<summary>Reveal Solution</summary>
-
-```bash
-# Create volumes
-docker volume create vol1
-docker volume create vol2
-docker volume create vol3
-
-# Use volumes in containers
-docker run --rm -v vol1:/data1 -v vol2:/data2 alpine echo "test"
-docker run --rm -v vol3:/data3 alpine echo "test"
-
-# List unused volumes
-docker volume ls
-
-# Remove unused volumes
-docker volume prune -f
-
-# Verify cleanup
-docker volume ls
-```
-</details>
-
-## Exercise 10: Advanced Volume Scenarios
 Combine multiple concepts in a more complex scenario.
 
 1. Create a development environment with:
@@ -348,14 +452,3 @@ rm -rf src db-backup.tar
 ```
 </details>
 
-## Next Steps
-After completing these exercises, you should be comfortable with:
-- Creating and managing Docker volumes
-- Using bind mounts
-- Working with tmpfs mounts
-- Sharing data between containers
-- Backing up and restoring volume data
-- Volume organization and cleanup
-- Complex storage scenarios
-
-Try creating your own development environments using these storage concepts! 

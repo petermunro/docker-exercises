@@ -326,7 +326,7 @@ Create a multi-tier application network setup.
 
 1. Create two networks: "frontend-net" and "backend-net"
 2. Run a web container connected to frontend-net
-3. Run a database container connected to backend-net
+3. Run a database container (use the "mongo" image)connected to backend-net
 4. Connect the web container to backend-net
 5. Verify connectivity between all containers
 6. Clean up when done
