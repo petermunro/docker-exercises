@@ -12,9 +12,6 @@ In this lab, you'll learn the basics of creating a Dockerfile and building a Doc
 - Build a Docker image
 - Tag Docker images
 
-### Estimated Time
-20 minutes
-
 ### The Lab
 
 #### Step 1: Create a Working Directory
@@ -28,16 +25,17 @@ In this lab, you'll learn the basics of creating a Dockerfile and building a Doc
 1. Using your favorite text editor, create a file named `Dockerfile` (no extension) and add the following content:
    ```dockerfile
    FROM ubuntu:22.04
-   
+
    # Update package list and install nginx
-   RUN apt-get update && \
-       apt-get install -y nginx
-   
+   RUN apt update && \
+       apt install -y nginx
+
    # Create a simple index.html
    COPY index.html /var/www/html/
 
    # Expose port 80
    EXPOSE 80
+   CMD ["nginx", "-g", "daemon off;"]
    ```
 
 2. Create an `index.html` file in the same directory:
