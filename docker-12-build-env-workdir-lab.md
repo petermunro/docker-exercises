@@ -67,7 +67,7 @@ In this lab, you'll learn about Dockerfile instructions that help you set up the
    docker run -e DEBUG_MODE=true env-demo
    ```
 
-❓ **Question**: What's the difference between setting environment variables in the Dockerfile and passing them at runtime?
+   ❓ **Question**: What's the difference between setting environment variables in the Dockerfile and passing them at runtime?
 
 #### Step 3: Build Arguments with ARG
 1. Create a new Dockerfile named `Dockerfile.arg`:
@@ -100,7 +100,12 @@ In this lab, you'll learn about Dockerfile instructions that help you set up the
 1. Create some test files:
    ```bash
    echo "Regular file" > regular.txt
-   echo "Test content" > test.tar.gz
+
+   mkdir sample-content
+   echo "sample file 1" > sample-content/file1
+   echo "sample file 2" > sample-content/file2
+   echo "sample file 3" > sample-content/file3
+   tar cvf test.tar.gz sample-content
    ```
 
 2. Create a Dockerfile named `Dockerfile.copy`:
@@ -115,7 +120,7 @@ In this lab, you'll learn about Dockerfile instructions that help you set up the
    
    # Using ADD
    ADD test.tar.gz ./add-example/
-   ADD https://example.com/robots.txt ./add-example/
+   ADD https://xanadu.ie/robots.txt ./add-example/
    
    CMD ["ls", "-R", "/app"]
    ```
