@@ -93,13 +93,13 @@ In this lab, you'll learn about the `CMD` and `ENTRYPOINT` instructions in Docke
    `Dockerfile.shell`:
    ```dockerfile
    FROM ubuntu:22.04
-   CMD echo "Running in shell form"
+   CMD ps -ef
    ```
 
    `Dockerfile.exec`:
    ```dockerfile
    FROM ubuntu:22.04
-   CMD ["echo", "Running in exec form"]
+   CMD ["ps", "-ef"]
    ```
 
 2. Build and run both:
@@ -110,7 +110,7 @@ In this lab, you'll learn about the `CMD` and `ENTRYPOINT` instructions in Docke
    docker run exec-form
    ```
 
-❓ **Question**: Try running 'ps' inside both containers. What differences do you notice in the process list?
+❓ **Question**: What differences do you notice in the process list?
 
 ### Challenge
 Create a configurable weather report container:
