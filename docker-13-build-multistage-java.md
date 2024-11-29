@@ -22,7 +22,7 @@ In this lab, you'll create a Spring Boot application and optimize its Docker ima
 #### Step 1: Get the Spring Boot Application
 1. Clone the starter project:
    ```bash
-   git clone https://github.com/your-org/spring-docker-demo
+   git clone https://github.com/petermunro/docker-spring-boot-example.git
    cd spring-docker-demo
    ```
 
