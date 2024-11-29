@@ -12,9 +12,6 @@ In this lab, you'll learn about the `CMD` and `ENTRYPOINT` instructions in Docke
 - Explore how to override default commands
 - Create containers with configurable behavior
 
-### Estimated Time
-30 minutes
-
 ### The Lab
 
 #### Step 1: Understanding CMD

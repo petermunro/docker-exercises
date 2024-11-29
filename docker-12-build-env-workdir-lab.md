@@ -12,9 +12,6 @@ In this lab, you'll learn about Dockerfile instructions that help you set up the
 - Use build arguments for flexible image building
 - Understand when to use COPY vs ADD
 
-### Estimated Time
-30 minutes
-
 ### The Lab
 
 #### Step 1: Working with WORKDIR

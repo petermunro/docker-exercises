@@ -13,8 +13,6 @@ In this lab, you'll learn how to create efficient Docker images using multi-stag
 - Learn best practices for layer optimization
 - Create production-ready images
 
-### Estimated Time
-45 minutes
 
 ### The Lab
 
