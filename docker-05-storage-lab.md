@@ -132,13 +132,15 @@ docker build -t config-demo .
 ```
 
 2. Run with config directory mounted as a bind mount
+    - The `config` directory needs to be mapped in to the container's directory at `/app/config`
+    - The container listens on port 3000, so you'll need to map that in too
 
 3. Test the initial configuration:
     - Visit http://localhost:3000
 
 
 4. Modify the configuration without restarting the container
-   - Edit the `config/settings.json` file - try different scenarios:
+   - On your host, edit the `config/settings.json` file. Try different scenarios:
         - Change the theme
         - Change the welcome message
         - Change the font size
