@@ -68,13 +68,32 @@ In this lab, you'll learn how to:
    CMD ["python", "app.py"]
    ```
 
-2. Build and analyze the image:
+2. Add a requirements.txt file to the current directory:
+
+   ```bash
+   cat > requirements.txt
+   Flask==3.0.0
+   Werkzeug==3.0.1
+   Jinja2==3.1.3
+   click==8.1.7
+   itsdangerous==2.1.2
+   python-dotenv==1.0.0
+   Flask-SQLAlchemy==3.1.1
+   Flask-Login==0.6.3
+   Flask-WTF==1.2.1
+   gunicorn==21.2.0
+   pytest==7.4.3
+   ```
+
+   Hit CTRL-D to end your input.
+
+3. Build and analyze the image:
    ```bash
    docker build -t myapp:v1 .
    dive myapp:v1
    ```
 
-3. Tasks:
+4. Tasks:
    - Identify which layer contains the pip packages
    - Look for any cached pip files that could be cleaned up
    - Note any files that appear in multiple layers
