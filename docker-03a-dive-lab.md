@@ -19,12 +19,18 @@ In this lab, you'll learn how to:
    docker pull nginx:latest
    ```
 
-2. Analyze the image with Dive:
+2. Set up the dive command alias:
+
+   ```bash
+   alias dive="docker run -ti --rm  -v /var/run/docker.sock:/var/run/docker.sock wagoodman/dive"
+   ```
+
+3. Analyze the image with Dive:
    ```bash
    dive nginx:latest
    ```
 
-3. Tasks:
+4. Tasks:
    - Count how many layers the image has
    - Find the largest layer and note what changes it introduces
    - Look for any duplicate files across layers
