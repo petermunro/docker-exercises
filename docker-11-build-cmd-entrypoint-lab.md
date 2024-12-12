@@ -115,10 +115,23 @@ In this lab, you'll learn about the `CMD` and `ENTRYPOINT` instructions in Docke
 ### Challenge
 Create a configurable weather report container:
 1. Create a script that accepts a city name and outputs "Weather report for [city]: Sunny"
+   - See below for an example
 2. Use ENTRYPOINT to run the script
 3. Use CMD to provide a default city
 4. Make it possible to override the city at runtime
 5. Bonus: Add a `-u` flag that makes the city uppercase
+
+#### Example weather report shell script:
+
+```bash
+#!/bin/sh
+
+if [ $# -eq 0 ]; then
+    echo "Weather report for unknown city: Sunny"
+else
+    echo "Weather report for $1: Sunny"
+fi
+```
 
 ### Key Takeaways
 - CMD provides default arguments that can be overridden

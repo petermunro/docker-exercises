@@ -12,25 +12,14 @@ In this lab, you'll learn how to:
 - Docker installed and running
 - Dive installed (see installation section above)
 
-### Exercise 1: Analyzing the Official Nginx Image
+### Exercise 1: Analyzing the Official MySql Image
 
-1. Pull the latest Nginx image:
+1. Analyse the latest MySql image:
    ```bash
-   docker pull nginx:latest
+   dive mysql:latest
    ```
 
-2. Set up the dive command alias:
-
-   ```bash
-   alias dive="docker run -ti --rm  -v /var/run/docker.sock:/var/run/docker.sock wagoodman/dive"
-   ```
-
-3. Analyze the image with Dive:
-   ```bash
-   dive nginx:latest
-   ```
-
-4. Tasks:
+2. Tasks:
    - Count how many layers the image has
    - Find the largest layer and note what changes it introduces
    - Look for any duplicate files across layers
@@ -38,19 +27,13 @@ In this lab, you'll learn how to:
 
 ### Exercise 2: Comparing Image Variants
 
-1. Pull different variants of the Nginx image:
+1. Analyse different variants of the MySql image:
    ```bash
-   docker pull nginx:alpine
-   docker pull nginx:mainline
+   dive mysql:alpine
+   dive mysql:mainline
    ```
 
-2. Analyze each variant:
-   ```bash
-   dive nginx:alpine
-   dive nginx:mainline
-   ```
-
-3. Tasks:
+2. Tasks:
    - Compare the total size of each image
    - Note the differences in base layers
    - Identify which variant would be best for production use
@@ -59,6 +42,7 @@ In this lab, you'll learn how to:
 ### Exercise 3: Analyzing a Python Application
 
 1. Create a simple Python application Dockerfile:
+
    ```dockerfile
    FROM python:3.9
    WORKDIR /app
@@ -68,32 +52,13 @@ In this lab, you'll learn how to:
    CMD ["python", "app.py"]
    ```
 
-2. Add a requirements.txt file to the current directory:
-
-   ```bash
-   cat > requirements.txt
-   Flask==3.0.0
-   Werkzeug==3.0.1
-   Jinja2==3.1.3
-   click==8.1.7
-   itsdangerous==2.1.2
-   python-dotenv==1.0.0
-   Flask-SQLAlchemy==3.1.1
-   Flask-Login==0.6.3
-   Flask-WTF==1.2.1
-   gunicorn==21.2.0
-   pytest==7.4.3
-   ```
-
-   Hit CTRL-D to end your input.
-
-3. Build and analyze the image:
+2. Build and analyze the image:
    ```bash
    docker build -t myapp:v1 .
    dive myapp:v1
    ```
 
-4. Tasks:
+3. Tasks:
    - Identify which layer contains the pip packages
    - Look for any cached pip files that could be cleaned up
    - Note any files that appear in multiple layers
@@ -103,7 +68,6 @@ In this lab, you'll learn how to:
 
 1. Analyze the Node.js official image:
    ```bash
-   docker pull node:latest
    dive node:latest
    ```
 
@@ -117,7 +81,7 @@ In this lab, you'll learn how to:
 - Use Tab to switch between the layer view and file tree
 - Press Ctrl+Space to expand/collapse all directories
 - Use Ctrl+A to see aggregated changes across layers
-- Remember to look at the efficiency score in the bottom right
+- Remember to look at the efficiency score in the bottom
 
 ### Discussion Questions
 1. What patterns did you notice in how official images are structured?

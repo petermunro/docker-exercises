@@ -116,11 +116,12 @@ docker rm my-ubuntu
 Learn to run containers in detached mode.
 
 1. Run an nginx container in detached mode using `-d`
-2. List running containers
+2. List running containers and verify that the nginx container is running
 3. Stop the container
 4. Remove the container
 5. Run another nginx container with both `-d` and `--name` flags
-6. Clean up when done
+6. Verify that the named nginx container is running
+7. Clean up when done
 
 <details>
 <summary>Reveal Solution</summary>
@@ -153,7 +154,7 @@ Learn to map container ports to host ports.
 1. Run an nginx container in detached mode
 2. Try to access it at http://localhost:80 (it won't work)
 3. Remove that container
-4. Run a new nginx container with port 80 mapped to port 8080
+4. Run a new nginx container with port 80 in the container mapped to port 8080 on the host
 5. Access it at http://localhost:8080
 6. List running containers and observe the port mapping
 7. Clean up when done
@@ -185,12 +186,11 @@ docker rm nginx2
 Learn to view container logs.
 
 1. Run a container that pings google.com continuously
-   (Hint: Use `docker run alpine ping google.com`)
+   (Hint: Use `docker run -d alpine ping google.com` to run it in the background, or open a new shell or terminal if you run it without `-d`)
 2. List running containers to get its ID or name
 3. View the container logs
 4. Try following the logs with `-f` flag
 5. Clean up when done
-
 <details>
 <summary>Reveal Solution</summary>
 

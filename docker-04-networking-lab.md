@@ -33,6 +33,45 @@ docker rm web1
 ```
 </details>
 
+## Exercise 1B: Default Bridge Network Limitations
+Learn about the limitations of the default bridge network.
+
+> Using ping
+  
+
+1. Run two nginx containers on the default bridge network
+2. Try to ping between containers using container names (this will fail)
+3. Find the IP address of the second container
+4. Ping using IP address (this will work)
+5. Clean up when done
+
+<details>
+<summary>Reveal Solution</summary>
+
+```bash
+# Run two containers on default bridge network
+docker run -d --name bridge1 nginx
+docker run -d --name bridge2 nginx
+
+# Install ping utility in first container
+docker exec -it bridge1 apt-get update
+docker exec -it bridge1 apt-get install -y iputils-ping
+
+# Try to ping by name (this will fail)
+docker exec -it bridge1 ping bridge2
+
+# Get IP address of bridge2
+docker inspect bridge2 | grep IPAddress
+
+# Ping using IP address (this will work)
+docker exec -it bridge1 ping <IP_ADDRESS_OF_BRIDGE2>
+
+# Clean up
+docker stop bridge1 bridge2
+docker rm bridge1 bridge2
+```
+</details>
+
 ## Exercise 2: Creating Custom Networks
 Learn to create and manage custom bridge networks.
 
